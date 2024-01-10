@@ -27,7 +27,7 @@ function startExpress() {
         origin: '*'
     }));
     app.get('/countAttachments/:columnId/:cardId', (req, res) => {
-        fs.readdir(`/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
+        fs.readdir(`${__dirname}/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
             if (err) {
                 res.send({ count: 0 })
                 return;
@@ -40,12 +40,15 @@ function startExpress() {
         res.send({ data: 1 })
     })
     app.get('/getAttachments/:columnId/:cardId', (req, res) => {
-        fs.readdir(`/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
+
+        fs.readdir(`${__dirname}/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
+
             if (err) {
                 res.send({ files: [] })
                 return;
             }
-            res.send(files)
+            files = files.map(filename => `${req.params.columnId}/${req.params.cardId}/${filename}`)
+            res.send({ files })
         });
     })
     app.use(express.static(__dirname + '/attachments'))
