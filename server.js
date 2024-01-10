@@ -36,7 +36,7 @@ function startExpress() {
     app.post('/upload', upload.single('file'), (req, res) => {
         res.send({ data: 1 })
     })
-
+    app.use(express.static(__dirname + '/attachments'))
     app.listen(process.env.PORT || 8080)
 }
 
