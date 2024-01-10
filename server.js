@@ -1,6 +1,7 @@
 const express = require('express')
 const cluster = require('cluster');
 const { upload } = require('./fileManager');
+const fs = require('fs');
 const totalCPUs = require('os').cpus().length;
 if (cluster.isMaster) {
 
@@ -22,7 +23,9 @@ if (cluster.isMaster) {
 
 function startExpress() {
     const app = express()
-    app.use(require('cors'))
+    app.use(require('cors')({
+        origin: '*'
+    }));
     app.get('/countAttachments/:columnId/:cardId', (req, res) => {
         fs.readdir(`/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
             if (err) {
@@ -35,6 +38,15 @@ function startExpress() {
     })
     app.post('/upload', upload.single('file'), (req, res) => {
         res.send({ data: 1 })
+    })
+    app.get('/getAttachments/:columnId/:cardId', (req, res) => {
+        fs.readdir(`/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
+            if (err) {
+                res.send({ files: [] })
+                return;
+            }
+            res.send(files)
+        });
     })
     app.use(express.static(__dirname + '/attachments'))
     app.listen(process.env.PORT || 8080)
