@@ -26,6 +26,9 @@ function startExpress() {
     app.use(require('cors')({
         origin: '*'
     }));
+    app.get('/', (req, res) => {
+        res.send("Hello World ☺")
+    })
     app.get('/countAttachments/:columnId/:cardId', (req, res) => {
         fs.readdir(`${__dirname}/attachments/${req.params.columnId}/${req.params.cardId}`, (err, files) => {
             if (err) {
